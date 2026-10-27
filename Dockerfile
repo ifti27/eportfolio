@@ -14,6 +14,8 @@ RUN apk add --no-cache \
     git \
     curl \
     libpng-dev \
+    libjpeg-turbo-dev \
+    freetype-dev \
     libxml2-dev \
     zip \
     unzip \
@@ -23,7 +25,8 @@ RUN apk add --no-cache \
     postgresql-dev \
     bash
 
-RUN docker-php-ext-install \
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install \
     pdo \
     pdo_mysql \
     pdo_pgsql \
@@ -38,6 +41,10 @@ RUN docker-php-ext-install \
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Configure Composer environment
+ENV COMPOSER_ALLOW_SUPERUSER=1
+ENV COMPOSER_MEMORY_LIMIT=-1
+
 WORKDIR /var/www
 
 # Copy application files
@@ -46,8 +53,8 @@ COPY . .
 # Copy built frontend assets from Stage 1
 COPY --from=frontend /app/public/build ./public/build
 
-# Install production Composer dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# Install production Composer dependencies (disable scripts during image build)
+RUN composer install --no-dev --no-scripts --optimize-autoloader --no-interaction
 
 # Permissions for storage & cache
 RUN chmod -R 775 storage bootstrap/cache

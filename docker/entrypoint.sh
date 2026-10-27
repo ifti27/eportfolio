@@ -13,6 +13,10 @@ if [ -z "$APP_KEY" ]; then
     php artisan key:generate --force
 fi
 
+# Run package discovery now that runtime environment is available
+echo "==> Running package discovery..."
+php artisan package:discover --ansi || true
+
 # Link storage
 echo "==> Creating storage symbolic link..."
 php artisan storage:link --force || true
