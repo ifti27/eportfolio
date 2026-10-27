@@ -6,39 +6,37 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-# --- Stage 2: PHP Application Container ---
-FROM php:8.3-cli-alpine
+# --- Stage 2: Production PHP Application ---
+FROM php:8.3-cli-bookworm
 
-# Install system dependencies and PHP extensions
-RUN apk add --no-cache \
+# Install required system packages and libraries
+RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     curl \
     libpng-dev \
-    libjpeg-turbo-dev \
-    freetype-dev \
-    libxml2-dev \
-    zip \
-    unzip \
+    libjpeg-dev \
+    libfreetype6-dev \
     libzip-dev \
-    oniguruma-dev \
-    mariadb-connector-c-dev \
-    postgresql-dev \
-    bash
-
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install \
-    pdo \
-    pdo_mysql \
-    pdo_pgsql \
-    mbstring \
+    libpq-dev \
+    libicu-dev \
+    unzip \
     zip \
-    exif \
-    pcntl \
-    bcmath \
-    gd \
-    opcache
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) \
+        pdo \
+        pdo_mysql \
+        pdo_pgsql \
+        mbstring \
+        zip \
+        exif \
+        pcntl \
+        bcmath \
+        gd \
+        intl \
+        opcache \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Get latest Composer
+# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Configure Composer environment
@@ -47,23 +45,21 @@ ENV COMPOSER_MEMORY_LIMIT=-1
 
 WORKDIR /var/www
 
-# Copy application files
+# Copy codebase
 COPY . .
 
-# Copy built frontend assets from Stage 1
+# Copy Vite build from frontend stage
 COPY --from=frontend /app/public/build ./public/build
 
-# Install production Composer dependencies (disable scripts during image build)
-RUN composer install --no-dev --no-scripts --optimize-autoloader --no-interaction
+# Install PHP dependencies with --ignore-platform-reqs to prevent build-time extension check aborts
+RUN composer install --no-dev --no-scripts --optimize-autoloader --no-interaction --ignore-platform-reqs --verbose
 
-# Permissions for storage & cache
+# Permissions
 RUN chmod -R 775 storage bootstrap/cache
 
-# Expose web port (Render & Railway default to 10000 or $PORT)
 ENV PORT=10000
 EXPOSE 10000
 
-# Make entrypoint executable
 RUN chmod +x ./docker/entrypoint.sh
 
 ENTRYPOINT ["./docker/entrypoint.sh"]
