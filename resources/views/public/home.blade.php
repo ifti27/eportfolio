@@ -104,33 +104,27 @@
 <!-- Clean Stats Overview Section -->
 <section id="stats" class="py-14 bg-white dark:bg-[#0c111d] border-y border-slate-200 dark:border-slate-800/80 stats-section transition-colors">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-6 sm:gap-8">
-            <!-- Stat 1 -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
+            <!-- Stat 1: Projects Built -->
             <div class="text-center" data-aos="fade-up" data-aos-delay="0">
-                <div class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white counter tracking-tight font-mono" data-target="{{ $stats['projects'] ?? 0 }}" data-suffix="+">0</div>
+                <div class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white counter tracking-tight font-mono" data-target="{{ $stats['projects'] ?? 0 }}" data-suffix="">0</div>
                 <p class="mt-1 text-slate-600 dark:text-slate-400 font-medium text-xs sm:text-sm">Projects Built</p>
             </div>
 
-            <!-- Stat 2 -->
+            <!-- Stat 2: Technologies -->
             <div class="text-center" data-aos="fade-up" data-aos-delay="50">
-                <div class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white counter tracking-tight font-mono" data-target="{{ $stats['skills'] ?? 0 }}" data-suffix="+">0</div>
+                <div class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white counter tracking-tight font-mono" data-target="{{ $stats['skills'] ?? 0 }}" data-suffix="">0</div>
                 <p class="mt-1 text-slate-600 dark:text-slate-400 font-medium text-xs sm:text-sm">Technologies</p>
             </div>
 
-            <!-- Stat 3 -->
+            <!-- Stat 3: Honors & Awards -->
             <div class="text-center" data-aos="fade-up" data-aos-delay="100">
-                <div class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white counter tracking-tight font-mono" data-target="{{ $stats['experience_years'] ?? 0 }}" data-suffix="+">0</div>
-                <p class="mt-1 text-slate-600 dark:text-slate-400 font-medium text-xs sm:text-sm">Years Experience</p>
-            </div>
-
-            <!-- Stat 4 -->
-            <div class="text-center" data-aos="fade-up" data-aos-delay="150">
                 <div class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white counter tracking-tight font-mono" data-target="{{ $stats['awards'] ?? 0 }}" data-suffix="">0</div>
                 <p class="mt-1 text-slate-600 dark:text-slate-400 font-medium text-xs sm:text-sm">Honors & Awards</p>
             </div>
 
-            <!-- Stat 5 -->
-            <div class="text-center col-span-2 md:col-span-1" data-aos="fade-up" data-aos-delay="200">
+            <!-- Stat 4: Publications -->
+            <div class="text-center" data-aos="fade-up" data-aos-delay="150">
                 <div class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white counter tracking-tight font-mono" data-target="{{ $stats['publications'] ?? 0 }}" data-suffix="">0</div>
                 <p class="mt-1 text-slate-600 dark:text-slate-400 font-medium text-xs sm:text-sm">Publications</p>
             </div>
