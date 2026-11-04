@@ -51,6 +51,27 @@
         </a>
     </div>
 
+    <!-- 🚀 GitHub Pages Publish Card -->
+    <div class="bg-slate-900 text-white rounded-2xl p-6 border border-slate-800 shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="text-xs font-mono uppercase font-bold text-emerald-400 tracking-wider">GitHub Pages Sync</span>
+            </div>
+            <h2 class="text-xl font-bold">Publish Updates to GitHub Pages</h2>
+            <p class="text-slate-300 text-xs sm:text-sm mt-0.5 max-w-xl">
+                Modified your projects, skills, or bio? Click publish to export the latest HTML/CSS and update your live GitHub Pages site.
+            </p>
+        </div>
+        <form action="{{ route('admin.publish') }}" method="POST" onsubmit="this.querySelector('button').disabled=true; this.querySelector('button').innerHTML='Publishing to GitHub...';">
+            @csrf
+            <button type="submit" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-xl transition flex items-center gap-2 shadow-sm cursor-pointer whitespace-nowrap">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                <span>Publish to GitHub Pages</span>
+            </button>
+        </form>
+    </div>
+
     <!-- Quick Actions -->
     <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
         <h2 class="text-lg font-bold mb-4 text-gray-900 dark:text-gray-100">Quick Actions</h2>
@@ -74,8 +95,6 @@
                 + Add Publication
             </a>
             <a href="{{ route('admin.experiences.create') }}" class="px-4 py-2.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 text-sm font-semibold rounded-xl transition">
-                + Add Experience
-            </a>
                 + Add Experience
             </a>
         </div>

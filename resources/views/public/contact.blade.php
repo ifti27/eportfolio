@@ -201,8 +201,28 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 3. Form submit spinner state
-    form?.addEventListener('submit', () => {
+    // 3. Form submit handler (supports both local Laravel POST and static GitHub Pages mailto)
+    form?.addEventListener('submit', (e) => {
+        // If hosted statically (GitHub Pages or local file)
+        if (window.location.protocol === 'file:' || window.location.hostname.includes('github.io')) {
+            e.preventDefault();
+            const name = form.querySelector('[name="name"]')?.value || '';
+            const email = form.querySelector('[name="email"]')?.value || '';
+            const subject = form.querySelector('[name="subject"]')?.value || 'Portfolio Inquiry';
+            const body = form.querySelector('[name="body"]')?.value || '';
+            const targetEmail = "{{ $profile->email ?? 'muhtasin.ifti@gmail.com' }}";
+            
+            const mailtoUrl = `mailto:${targetEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent("Sender: " + name + " (" + email + ")\n\n" + body)}`;
+            window.location.href = mailtoUrl;
+
+            if (window.showToast) {
+                window.showToast('Opening your email client to send message to ' + targetEmail);
+            }
+            form.reset();
+            return;
+        }
+
+        // Running on local Laravel server
         if (submitBtn) {
             submitBtn.disabled = true;
             submitBtn.classList.add('opacity-80', 'cursor-not-allowed');

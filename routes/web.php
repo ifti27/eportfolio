@@ -69,6 +69,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/messages', [AdminMessageController::class, 'index'])->name('messages.index');
     Route::get('/messages/{message}', [AdminMessageController::class, 'show'])->name('messages.show');
     Route::delete('/messages/{message}', [AdminMessageController::class, 'destroy'])->name('messages.destroy');
+
+    // 1-Click GitHub Pages Publish
+    Route::post('/publish-gh-pages', [DashboardController::class, 'publishGhPages'])->name('publish');
 });
 
 if (file_exists(__DIR__.'/auth.php')) {
