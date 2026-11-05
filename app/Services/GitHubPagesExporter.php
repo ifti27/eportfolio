@@ -71,14 +71,28 @@ class GitHubPagesExporter
         $storageSource = public_path('storage');
         if (File::exists($storageSource)) {
             File::copyDirectory($storageSource, $this->outputDir . DIRECTORY_SEPARATOR . 'storage');
+            
+            // Crucial: remove .gitignore inside docs/storage so Git doesn't ignore project images and resumes!
+            $docsStorageGitignore = $this->outputDir . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . '.gitignore';
+            if (File::exists($docsStorageGitignore)) {
+                File::delete($docsStorageGitignore);
+            }
         }
 
         // 7. Handle CV / Resume download
         $profile = Profile::first();
         if ($profile && $profile->resume_url) {
-            $resumePath = public_path('storage/' . $profile->resume_url);
-            if (File::exists($resumePath)) {
-                File::copy($resumePath, $this->outputDir . DIRECTORY_SEPARATOR . 'cv.pdf');
+            $cleaned = str_replace(['/storage/', 'storage/'], '', $profile->resume_url);
+            $candidatePaths = [
+                public_path('storage/' . $cleaned),
+                storage_path('app/public/' . $cleaned),
+                public_path(ltrim($profile->resume_url, '/')),
+            ];
+            foreach ($candidatePaths as $candidate) {
+                if (File::exists($candidate)) {
+                    File::copy($candidate, $this->outputDir . DIRECTORY_SEPARATOR . 'cv.pdf');
+                    break;
+                }
             }
         }
 
