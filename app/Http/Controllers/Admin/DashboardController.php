@@ -39,12 +39,13 @@ class DashboardController extends Controller
         exec('git add docs/', $out1, $code1);
         exec('git commit -m "deploy: update static portfolio for GitHub Pages"', $out2, $code2);
         exec('git push origin main', $out3, $code3);
+        exec('git subtree push --prefix docs origin gh-pages', $out4, $code4);
 
-        $msg = 'Successfully exported and updated the docs/ folder for GitHub Pages! ';
-        if ($code3 === 0) {
+        $msg = 'Successfully exported and updated GitHub Pages! ';
+        if ($code3 === 0 || $code4 === 0) {
             $msg .= 'Pushed changes to GitHub. Your live site will update in ~30 seconds.';
         } else {
-            $msg .= 'Static files ready. You can push to GitHub using: git push origin main.';
+            $msg .= 'Static files ready in docs/.';
         }
 
         return redirect()->route('admin.dashboard')->with('success', $msg);
