@@ -57,14 +57,17 @@
             <input type="file" name="image" accept="image/*" class="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/40 dark:file:text-indigo-300 cursor-pointer">
         </div>
 
-        <div class="flex items-center gap-6">
-            <label class="inline-flex items-center gap-2 cursor-pointer">
+        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <label class="inline-flex items-center gap-3 cursor-pointer">
                 <input type="checkbox" name="is_featured" value="1" {{ old('is_featured', $project->is_featured) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 rounded">
-                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Feature on Homepage</span>
+                <div>
+                    <span class="text-sm font-semibold text-gray-800 dark:text-gray-200 block">Showcase on Homepage</span>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">If unchecked, this project appears on the full Projects page only.</span>
+                </div>
             </label>
             <div class="flex items-center gap-2">
-                <label class="text-sm font-semibold text-gray-700 dark:text-gray-300">Order:</label>
-                <input type="number" name="sort_order" value="{{ old('sort_order', $project->sort_order) }}" class="w-20 px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm">
+                <label class="text-xs font-semibold text-gray-600 dark:text-gray-300">Display Order:</label>
+                <input type="number" name="sort_order" value="{{ old('sort_order', $project->sort_order) }}" class="w-20 px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm">
             </div>
         </div>
 
