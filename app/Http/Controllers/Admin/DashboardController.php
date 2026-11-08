@@ -11,6 +11,7 @@ use App\Models\Skill;
 use App\Models\Qualification;
 use App\Models\Achievement;
 use App\Services\GitHubPagesExporter;
+use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
 {
@@ -34,20 +35,50 @@ class DashboardController extends Controller
 
     public function publishGhPages(GitHubPagesExporter $exporter)
     {
+        // 1. Export static HTML/assets to docs/
         $result = $exporter->export();
 
-        exec('git add docs/', $out1, $code1);
-        exec('git commit -m "deploy: update static portfolio for GitHub Pages"', $out2, $code2);
-        exec('git push origin main', $out3, $code3);
-        exec('git subtree push --prefix docs origin gh-pages', $out4, $code4);
+        $base = base_path();
+        $cwd = getcwd();
+        chdir($base);
 
-        $msg = 'Successfully exported and updated GitHub Pages! ';
-        if ($code3 === 0 || $code4 === 0) {
-            $msg .= 'Pushed changes to GitHub. Your live site will update in ~30 seconds.';
-        } else {
-            $msg .= 'Static files ready in docs/.';
+        $gitBase = 'git -C ' . escapeshellarg($base);
+
+        // 2. Stage docs/
+        exec("{$gitBase} add docs/ 2>&1", $outAdd, $codeAdd);
+
+        // 3. Commit only if there are staged changes
+        exec("{$gitBase} diff --cached --quiet docs/", $diffOut, $diffCode);
+        $committed = false;
+        if ($diffCode !== 0) {
+            exec("{$gitBase} commit -m \"deploy: update static portfolio for GitHub Pages\" 2>&1", $outCommit, $codeCommit);
+            $committed = true;
         }
 
-        return redirect()->route('admin.dashboard')->with('success', $msg);
+        // 4. Push main branch
+        exec("{$gitBase} push origin main 2>&1", $outPushMain, $codePushMain);
+
+        // 5. Push docs subtree to gh-pages branch
+        exec("{$gitBase} subtree push --prefix docs origin gh-pages 2>&1", $outPushGh, $codePushGh);
+
+        chdir($cwd);
+
+        Log::info('GitHub Pages Publish', [
+            'add' => $outAdd ?? [],
+            'committed' => $committed,
+            'commit_out' => $outCommit ?? [],
+            'push_main_code' => $codePushMain,
+            'push_main' => $outPushMain ?? [],
+            'push_gh_code' => $codePushGh,
+            'push_gh' => $outPushGh ?? [],
+        ]);
+
+        if ($codePushGh === 0 || $codePushMain === 0) {
+            $msg = 'Successfully published to GitHub Pages! Your live portfolio is updating (takes ~30-60s). Please hard-refresh your browser (Ctrl + F5 or Shift + Reload) to see the changes.';
+            return redirect()->route('admin.dashboard')->with('success', $msg);
+        }
+
+        $errorMsg = 'Static files exported to docs/, but pushing to GitHub encountered an issue. Check storage/logs/laravel.log or verify Git push permissions.';
+        return redirect()->route('admin.dashboard')->with('error', $errorMsg);
     }
 }
